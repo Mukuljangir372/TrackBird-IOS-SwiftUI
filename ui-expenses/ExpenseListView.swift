@@ -8,8 +8,18 @@
 import SwiftUI
 
 struct ExpenseListView: View {
+    
     var body: some View {
-        Text("Expense List View")
+        NavigationView {
+            VStack {
+                List(Expense.preview,id: \.id){ expense in
+                    ExpenseView(expense: expense)
+                }
+            }
+            .refreshable { }
+            .navigationTitle(HomeNavLabel.expense.rawValue)
+            .navigationBarTitleDisplayMode(.automatic)
+        }
     }
 }
 

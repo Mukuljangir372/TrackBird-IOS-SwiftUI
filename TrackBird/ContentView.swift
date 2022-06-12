@@ -44,8 +44,15 @@ struct NavView: View {
 }
 
 struct HomeNavItems {
-    static let expense = Label("Expenses", systemImage: "wallet.pass.fill")
-    static let notes = Label("Notes", systemImage: "note")
+    static let expense = Label(HomeNavLabel.expense.rawValue,
+                               systemImage: "wallet.pass.fill")
+    static let notes = Label(HomeNavLabel.notes.rawValue,
+                             systemImage: "note")
+}
+
+enum HomeNavLabel: String {
+    case expense = "Expenses"
+    case notes = "Notes"
 }
 
 struct ContentView_Previews: PreviewProvider {

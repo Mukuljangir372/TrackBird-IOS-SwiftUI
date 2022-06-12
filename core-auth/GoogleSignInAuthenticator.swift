@@ -12,6 +12,7 @@ import Firebase
 @MainActor
 class GoogleSignInAuthenticator: ObservableObject {
     
+    private let dataStore = DataStore.shared
     @Published var authState: AuthState = .idle
     
     func signIn(rootViewController: UIViewController) {
@@ -44,10 +45,13 @@ class GoogleSignInAuthenticator: ObservableObject {
                 if let user = result?.user {
                     self.log(msg: "user logged in : \(user.displayName ?? "name not found")")
                     self.authState = .signedIn
+                    self.storeUserSignInStatus(loggedIn: true)
+                    self.storeUser(userId: user.uid, userName: user.displayName, userEmail: user.email)
                     return
                 }else {
                     self.log(msg: "user not logged in")
                     self.authState = .signedOut
+                    self.storeUserSignInStatus(loggedIn: false)
                     return
                 }
             }
@@ -57,18 +61,38 @@ class GoogleSignInAuthenticator: ObservableObject {
     
     func checkSignInStatus() {
         if let user = Auth.auth().currentUser {
-            self.authState = .signedIn
             log(msg: "user signed in \(user.displayName ?? "")")
+            self.authState = .signedIn
+            storeUserSignInStatus(loggedIn: true)
+            storeUser(userId: user.uid, userName: user.displayName, userEmail: user.email)
         }else {
-            self.authState = .signedOut
             log(msg: "user singned out")
+            self.authState = .signedOut
+            storeUserSignInStatus(loggedIn: false)
         }
     }
     
     func signOut() throws {
         GIDSignIn.sharedInstance.signOut()
         self.authState = .signedOut
+        self.dataStore.eraseAllData()
         try Auth.auth().signOut()
+    }
+    
+    private func storeUser(
+        userId: String,
+        userName: String?,
+        userEmail: String?
+    ) {
+        dataStore.set(value: userId, key: dataStore.keys.userId)
+        dataStore.set(value: userName ?? "", key: dataStore.keys.userName)
+        dataStore.set(value: userEmail ?? "", key: dataStore.keys.userEmail)
+    }
+    
+    private func storeUserSignInStatus(
+        loggedIn: Bool
+    ){
+        dataStore.set(value: loggedIn, key: dataStore.keys.loggedIn)
     }
     
 }
