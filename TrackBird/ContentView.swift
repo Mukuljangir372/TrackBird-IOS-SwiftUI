@@ -15,11 +15,9 @@ struct ContentView: View {
         switch loginViewModel.authState {
         case .idle:
             ProgressView()
-        case .error:
-            Text("Something went wrong")
         case .signedIn:
             NavView()
-        case .signedOut:
+        case .signedOut, .error:
             LoginView()
         }
     }
@@ -30,17 +28,24 @@ struct NavView: View {
         TabView {
             ExpenseListView()
                 .tabItem({
-                    Label("Expenses", systemImage: "wallet.pass.fill")
+                    HomeNavItems.expense
                 })
                 .tag(0)
             NoteListView()
                 .tabItem({
-                    Label("Notes", systemImage: "note")
+                    HomeNavItems.notes
                 })
                 .tag(1)
         }
         .font(.headline)
     }
+    
+
+}
+
+struct HomeNavItems {
+    static let expense = Label("Expenses", systemImage: "wallet.pass.fill")
+    static let notes = Label("Notes", systemImage: "note")
 }
 
 struct ContentView_Previews: PreviewProvider {
