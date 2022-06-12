@@ -6,12 +6,17 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 @main
 struct TrackBirdApp: App {
+    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @StateObject var loginViewModel = LoginViewModel()
+   
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView().environmentObject(self.loginViewModel)
         }
     }
 }
